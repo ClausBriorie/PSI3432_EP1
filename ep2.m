@@ -33,12 +33,9 @@ Ta=0.0001;
 fa=1/Ta;
 f1=1/(1.9e-3);
 
-
-
 n=[0:1:19];
 w = 2*pi*f;
 x_n = sin(w*n*Ta) + (1/3)*sin(3*w*n*Ta);
-
 
 %% ITEM D
 
@@ -49,18 +46,15 @@ k=[0:1:19];
 figure;
 s(1) = subplot(211);
 stem(k,abs(X_k));
-title(s(1),'Item D: Módulo da STFD');
+title(s(1),'Item D: MÃ³dulo da STFD');
 s(2) = subplot(212);
 stem(k,angle(X_k));
 title(s(2),'Item D: Fase da SFTD');
 
-
 %% ITEM E
 
 X_ejw = 0;
-
 for j=1:1:20
-
     X_ejw =[X_ejw x_n(j)*exp(-i*w*j)];
 end
 
@@ -69,7 +63,7 @@ k=[0:1:20];
 figure;
 s(1) = subplot(211);
 stem(k,abs(X_ejw));
-title(s(1),'Item E: Módulo da TFTD');
+title(s(1),'Item E: MÃ³dulo da TFTD');
 s(2) = subplot(212);
 stem(k,angle(X_ejw));
 title(s(2),'Item E: Fase da TFTD');
@@ -79,11 +73,10 @@ title(s(2),'Item E: Fase da TFTD');
 k=[0:1:19];
 
 figure;
-
 stem(k,abs(X_k));
 hold on;
 stem(k,abs(xk));
-title('Item F: Comparação entre TFTD e SF')
+title('Item F: ComparaÃ§Ã£o entre TFTD e SF')
 hold off;
 
 %% ITEM G
@@ -101,7 +94,7 @@ s(1) = subplot(211);
 stem(k,abs(X_k));
 hold on;
 stem(k2,abs(X_k2));
-title(s(1), 'Item G: Módulos da TDF e da TDF com um ponto a mais');
+title(s(1), 'Item G: MÃ³dulos da TDF e da TDF com um ponto a mais');
 hold off;
 s(2) = subplot(212);
 stem(k,angle(X_k));
@@ -111,7 +104,7 @@ title(s(2), 'Item G: Fases da TDF e da TDF com um ponto a mais');
 hold off;
 
 %% ITEM H
-% Mudando n para 4 períodos
+% Mudando n para 4 perÃ­odos
 n=[0:1:79];
 x_n = sin(w*n*Ta) + (1/3)*sin(3*w*n*Ta);
 
@@ -122,14 +115,14 @@ k=[0:1:79];
 figure;
 s(1) = subplot(211);
 stem(k,abs(X_k_4periodos));
-title(s(1),'Item H: Módulo da STFD (4 períodos)');
+title(s(1),'Item H: MÃ³dulo da STFD (4 perÃ­odos)');
 s(2) = subplot(212);
 stem(k,angle(X_k_4periodos));
-title(s(2),'Item H: Fase da SFTD (4 períodos)');
+title(s(2),'Item H: Fase da SFTD (4 perÃ­odos)');
 
 %% ITEM I
-% Mudando n para 4,5 períodos
-n=[0:1:89];
+% Mudando n para 4,5 perÃ­odos
+n = [0:1:89];
 x_n = sin(w*n*Ta) + (1/3)*sin(3*w*n*Ta);
 
 X_k_4emeioperiodos = fft(x_n);
@@ -139,7 +132,133 @@ k=[0:1:89];
 figure;
 s(1) = subplot(211);
 stem(k,abs(X_k_4emeioperiodos));
-title(s(1),'Item I: Módulo da STFD (4,5 períodos)');
+title(s(1),'Item I: MÃ³dulo da STFD (4,5 perÃ­odos)');
 s(2) = subplot(212);
 stem(k,angle(X_k_4emeioperiodos));
-title(s(2),'Item I: Fase da SFTD (4,5 períodos)');
+title(s(2),'Item I: Fase da SFTD (4,5 perÃ­odos)');
+
+%% ExercÃ­cio 2
+
+%% ITEM C
+Ta = 1/30;
+fa = 1/Ta;
+O_a = 2*pi*fa; % omega da amostra
+N = 60;
+n = [0:1:59];
+res = 10000; % resolu?o
+
+% CÃ¡culo da TFTD teÃ³rica
+idx = 1;
+for o = -3*pi:(pi/res):3*pi
+    Y_ejomg_teo(idx) = (1/2i)*((1-exp(-1i*(o-2*pi*Ta)*N))/(1-exp(-1i*(o-2*pi*Ta))) - ...
+                               (1-exp(-1i*(o+2*pi*Ta)*N))/(1-exp(-1i*(o+2*pi*Ta))));
+    idx = idx + 1;
+end
+
+% CÃ¡culo da somatÃ³ria proposta
+Y = zeros(1, res);
+for l=1:1:3
+    idx = 1;
+    for o=0:(pi/res):pi - pi/res
+        Y(idx) = Y(idx) + (1/2i)*(sqrt(2/pi))*((exp(1i*(o/Ta-l*O_a)+2*pi)*sinc((o/Ta-l*O_a)+2*pi)) - ...
+                                               (exp(1i*(o/Ta-l*O_a)-2*pi)*sinc(2*pi-(o/Ta-l*O_a))));
+        idx = idx + 1;
+    end
+end
+
+Y = Y*(1/Ta);
+
+K = 1:res;
+w = -3*pi:(pi/res):3*pi;
+
+figure;
+s(1) = subplot(211);
+plot(w, abs(Y_ejomg_teo));
+title(s(1),'2-c): MÃ³dulo da TFTD TeÃ³rica');
+
+s(2) = subplot(212);
+plot(K, abs(Y));
+title(s(2),'2-c): MÃ³dulo da somatÃ³ria proposta');
+
+%% ex3
+clear all;
+close all;
+
+L=32;
+
+h(1:32) = 1/32;
+H_k = fft(h, L);
+
+
+N=1024;
+H = fft(h, N);
+
+
+%item a
+
+w = 2*pi*(0:(N-1))/N;
+w2 = fftshift(w);
+w3 = unwrap(w2 - 2*pi);
+figure;
+plot(w3, abs(fftshift(H)));
+xlabel('radianos');
+title ('filtro H(e^j^w)');
+
+%item b
+
+for n=1:32
+    x(n) = cos(0.1*pi*n) + 0.8*cos(0.8*pi*n);
+end
+figure;
+plot(x);
+title('x(n)');
+
+%item c
+
+
+y1 = conv(h,x);
+figure;
+plot (y1);
+
+figure;
+y2 = filter(H,1,x);
+freqz(y2);
+% plot(y2);
+
+%Esse aqui tá dando errado sem dúvidas
+
+%item d
+
+X_k = fft(x,L);
+Y_k = H_k.*X_k;
+y = ifft(Y_k);
+
+figure;
+plot(y);
+%Esse resultado não faz sentido mas não entendi qual o problema. Comparando
+%com o próximo resultado dá pra talvez imaginar alguma coisa (?) O que
+%pensei tá no item f
+
+%item e
+
+L2=64;
+h2(1:63) = 1/32;
+H_k2 = fft(h2, L2);
+for n=1:63
+    x(n) = cos(0.1*pi*n) + 0.8*cos(0.8*pi*n);
+end
+X_k2 = fft(x,L2);
+Y_k2 = H_k2.*X_k2;
+y2 = ifft(Y_k2);
+
+figure;
+plot(y2);
+
+%item f
+
+% A diferença do número de amostras é significativo para a eficiência e
+% funcionalidade do filtro. Com 32 coeficientes, todos os pontos do filtro
+% ficaram localizados nos pontos de zero do sinc, exceto o primeiro, e 
+%portanto o filtro não funcionou apropriadamente. Por conta disso, com mais
+%coeficientes como no caso de N=63, é possível verificar um sinal mais
+%semelhante ao obtido utilizando a função conv
